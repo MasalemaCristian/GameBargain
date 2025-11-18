@@ -1,0 +1,20 @@
+{
+  "name": "gamebargain",
+  "version": "1.0.0",
+  "description": "Cliente sencillo para mostrar ofertas de videojuegos — estructura mínima con Tailwind",
+  "main": "public/script.js",
+  "scripts": {
+    "build:css": "npx tailwindcss -i ./src/input.css -o ./public/output.css --minify",
+    "dev": "npx tailwindcss -i ./src/input.css -o ./public/output.css --watch",
+    "start": "npx serve public"
+  },
+  "keywords": [],
+  "author": "MasalemaCristian",
+  "license": "MIT",
+  "devDependencies": {
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8.4.0",
+    "autoprefixer": "^10.4.0",
+    "serve": "^14.0.0"
+  }
+}

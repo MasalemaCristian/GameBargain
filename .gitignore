@@ -1,0 +1,6 @@
+node_modules/
+public/output.css
+dist/
+/.vscode/
+npm-debug.log
+.DS_Store

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GameBargain — Ofertas</title>
+    <link rel="stylesheet" href="./output.css">
+  </head>
+  <body class="bg-gray-50 text-gray-900">
+    <main class="min-h-screen flex items-center justify-center">
+      <section class="max-w-xl w-full p-6">
+        <h1 class="text-2xl font-bold mb-4">GameBargain</h1>
+        <p id="status" class="text-sm text-gray-600">Proyecto mínimo con Tailwind. Pulsa el botón para probar JS.</p>
+        <div class="mt-4">
+          <button id="btn" class="px-4 py-2 bg-blue-600 text-white rounded">Probar</button>
+        </div>
+      </section>
+    </main>
+    <script src="./script.js"></script>
+  </body>
+</html>
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GameBargain — Buscador de Ofertas</title>
+
+  <!-- Favicon sencillo inline (emoji controlado como SVG usando data URL) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%AE%3C/text%3E%3C/svg%3E">
+
+  <!-- Output.css generado por Tailwind CLI -->
+  <link rel="stylesheet" href="./output.css">
+
+  <!-- Meta descripción -->
+  <meta name="description" content="Interfaz simple para buscar y filtrar ofertas de videojuegos usando la API de CheapShark.">
+
+  <!-- Comentario: Este HTML ofrece la estructura, el contenido dinámico (tarjetas, modal, etc.)
+       se renderiza desde public/script.js para evitar contenido "quemado". -->
+</head>
+<body class="bg-gray-100 min-h-screen text-gray-900">
+
+  <!-- Contenedor principal -->
+  <header class="bg-white shadow-sm sticky top-0 z-10">
+    <!-- Cabecera principal con nombre creativo + subtítulo -->
+    <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div class="flex items-start gap-3">
+        <!-- Nombre de la tienda / proyecto -->
+        <div class="text-2xl font-extrabold text-primary">GameBargain</div>
+        <!-- Subtítulo -->
+        <div class="text-sm text-gray-500">Encuentra las mejores ofertas de videojuegos</div>
+      </div>
+
+      <!-- Zona de controles (barra de búsqueda, selects, botón) -->
+      <div class="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto">
+        <!-- Formulario de búsqueda: input + botón -->
+        <form id="searchForm" class="flex w-full sm:w-auto gap-2" role="search">
+          <!-- Input: el usuario escribe el título del juego -->
+          <input id="searchInput" type="search" placeholder="Buscar juego por título..."
+                 class="px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary w-full"
+                 aria-label="Buscar juegos por título" />
+          <!-- Botón de búsqueda -->
+          <button type="submit"
+                  class="bg-primary text-white px-4 py-2 rounded hover:bg-accent transition">
+            Buscar
+          </button>
+        </form>
+
+        <!-- Select de tiendas: se llenará dinámicamente desde la API /stores -->
+        <select id="storeSelect" class="px-3 py-2 rounded border border-gray-300 bg-white ml-0 sm:ml-2">
+          <!-- Opciones añadidas por JavaScript -->
+          <option value="1">Steam (por defecto)</option>
+        </select>
+
+        <!-- Select de ordenamiento por precio -->
+        <select id="sortSelect" class="px-3 py-2 rounded border border-gray-300 bg-white ml-0 sm:ml-2">
+          <option value="none">Ordenar: predeterminado</option>
+          <option value="normal_asc">Precio normal ↑</option>
+          <option value="normal_desc">Precio normal ↓</option>
+          <option value="sale_asc">Precio oferta ↑</option>
+          <option value="sale_desc">Precio oferta ↓</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mensajes de estado: cargando, error -->
+  <main class="max-w-6xl mx-auto px-4 py-6">
+    <!-- Área para mensajes y spinner -->
+    <div id="statusArea" class="mb-4">
+      <!-- Aquí se mostrará "Cargando..." y spinner o errores -->
+      <div id="loader" class="hidden items-center gap-3 text-gray-600">
+        <!-- Spinner simple con CSS (se usa utilidades de Tailwind para animación) -->
+        <div class="w-6 h-6 border-4 border-t-primary rounded-full animate-spin"></div>
+        <div>Cargando...</div>
+      </div>
+
+      <div id="errorArea" class="hidden text-red-600"></div>
+    </div>
+
+    <!-- Grid para mostrar videojuegos (vacío inicialmente, será llenado por JS) -->
+    <section id="gamesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- Tarjetas generadas dinámicamente por JavaScript -->
+    </section>
+
+    <!-- Ver más / paginación -->
+    <div class="mt-6 text-center">
+      <button id="loadMoreBtn" class="bg-white border border-gray-300 px-4 py-2 rounded shadow-sm hover:bg-gray-50 hidden">
+        Ver más
+      </button>
+    </div>
+  </main>
+
+  <!-- Modal oculto para mostrar detalle del juego -->
+  <div id="detailModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-lg max-w-3xl w-full mx-4 overflow-hidden">
+      <div class="flex items-center justify-between px-4 py-3 border-b">
+        <h3 id="modalTitle" class="text-lg font-bold">Detalle</h3>
+        <button id="modalCloseBtn" aria-label="Cerrar modal" class="text-gray-600 hover:text-gray-900">&times;</button>
+      </div>
+      <div class="p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Imagen -->
+        <div class="md:col-span-1 flex items-center justify-center">
+          <img id="modalThumb" src="" alt="Imagen del juego" class="max-h-48 object-contain" />
+        </div>
+        <!-- Datos -->
+        <div class="md:col-span-2">
+          <p id="modalTitleFull" class="font-semibold text-xl mb-2"></p>
+          <p class="text-sm text-gray-600 mb-2" id="modalStoreName"></p>
+
+          <div class="flex gap-4 items-baseline">
+            <p class="text-gray-500 line-through" id="modalNormalPrice"></p>
+            <p class="text-2xl text-red-600 font-bold" id="modalSalePrice"></p>
+          </div>
+
+          <div class="mt-4">
+            <a id="modalDealLink" class="inline-block bg-primary text-white px-4 py-2 rounded hover:bg-accent" target="_blank" rel="noopener noreferrer">
+              Ir a la oferta
+            </a>
+          </div>
+
+          <div id="modalExtra" class="mt-4 text-sm text-gray-700"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script con toda la lógica: busca, renderiza, gestiona modal, paginación, filtros, orden -->
+  <script src="./script.js"></script>
+</body>
+</html>
