@@ -104,8 +104,34 @@ function createCard(item) {
   const normal = document.createElement('span'); normal.className='text-gray-500 text-sm line-through'; normal.textContent = item.normalPrice ? `$${Number(item.normalPrice).toFixed(2)}` : '';
   const sale = document.createElement('span'); sale.className='text-red-600 font-bold'; sale.textContent = item.salePrice ? `$${Number(item.salePrice).toFixed(2)}` : 'N/A';
   priceRow.appendChild(normal); priceRow.appendChild(sale);
-  const btn = document.createElement('button'); btn.className='mt-3 bg-blue-600 text-white px-3 py-1 rounded text-sm'; btn.textContent='Ver detalle'; btn.addEventListener('click', ()=>openModal(item));
-  el.appendChild(img); el.appendChild(title); el.appendChild(priceRow); el.appendChild(btn);
+
+  // Botones: Ver detalle + Ir a la oferta
+  const actions = document.createElement('div'); actions.className = 'mt-3 flex gap-2';
+
+  const btn = document.createElement('button');
+  btn.className='bg-blue-600 text-white px-3 py-1 rounded text-sm';
+  btn.textContent='Ver detalle';
+  btn.addEventListener('click', ()=>openModal(item));
+
+  const offerLink = document.createElement('a');
+  offerLink.className = 'bg-green-600 text-white px-3 py-1 rounded text-sm text-center';
+  offerLink.textContent = 'Ir a la oferta';
+  // Determinar enlace a la oferta
+  const dealId = item.dealID || (item._raw && item._raw.cheapestDealID) || null;
+  if (dealId) {
+    offerLink.href = `https://www.cheapshark.com/redirect?dealID=${encodeURIComponent(dealId)}`;
+    offerLink.target = '_blank';
+    offerLink.rel = 'noopener noreferrer';
+  } else {
+    // Si no hay enlace, deshabilitamos el botón visualmente
+    offerLink.href = '#';
+    offerLink.classList.add('opacity-50', 'pointer-events-none');
+  }
+
+  actions.appendChild(btn);
+  actions.appendChild(offerLink);
+
+  el.appendChild(img); el.appendChild(title); el.appendChild(priceRow); el.appendChild(actions);
   return el;
 }
 
