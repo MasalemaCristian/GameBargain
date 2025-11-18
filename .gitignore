@@ -1,4 +1,8 @@
 node_modules/
+dist/
+/.vscode/
+npm-debug.log
+.DS_Storenode_modules/
 public/output.css
 dist/
 /.vscode/
